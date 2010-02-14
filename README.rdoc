@@ -37,8 +37,12 @@ RegExp functionality in the event handlers
     puts "SSH authentication failure for #{username} from #{ip}"
   end
 
-This is a bit better.  You could go further to have it automatically block the 
-IP with iptables if you wanted (see examples/ssh_sentry.rb).
+This is a bit better.  It seems a bit unfair to block someone for a single typo
+though, so why don't we give them three tries before blocking them?
+
+  on /sshd\[\d+\]: Failed password for ([\d\w]+) from ([\d\.]+)/, :times => 3 do |username, ip|
+    puts "SSH authentication failure for #{username} from #{ip}"
+  end
 
 == Note on Patches/Pull Requests
  

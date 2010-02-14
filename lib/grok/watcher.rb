@@ -9,6 +9,7 @@ module Grok
 
     def initialize(&b)
       @events = {}
+      @event_log = {}
       @config = Config.new("/var/log/messages", 10)
 
       #instance_eval(&b) if block_given?
@@ -21,7 +22,7 @@ module Grok
     def on(match, opts={}, &block)
       event = :log
       match = match.to_s if match.is_a? Integer
-      (@events[event] ||= []) << [Regexp.new(match), block]
+      (@events[event] ||= []) << [Regexp.new(match), block, opts[:times]]
     end
 
     def start
@@ -61,9 +62,13 @@ module Grok
 
     def dispatch(event, log)
       if handler = find(event, log)
-        regexp, block = *handler
+        regexp, block, times = *handler
         self.match = log.match(regexp).captures
-        invoke block
+        (@event_log[match] ||= []) << [Time.now]
+        if @event_log[match].length >= times.to_i
+          invoke block
+          @event_log[match].clear
+        end
       end
     end
   end
