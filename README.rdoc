@@ -23,17 +23,17 @@ There's only a few configuration parameters for Grok at this stage
 * replay: The number of lines to read from the bottom of the file on startup
 
 === Responding to log events
-At it's most basic, you can simply get Grok to print a message as it
+At it's most basic, you can simply get Grok to print out each message as it
 receives them (pretty pointless)
-  on :log do
-    puts "I just got a log message"
+  on /(.*)/ do |line|
+    puts line
   end
 
 Lets try something a bit more useful though.  Lets say I want to know every
 time there's an SSH authenitcation failure.  For that, we can make use of the
 RegExp functionality in the event handlers
 
-  on :log, /sshd\[\d+\]: Failed password for ([\d\w]+) from ([\d\.]+)/ do |username, ip|
+  on /sshd\[\d+\]: Failed password for ([\d\w]+) from ([\d\.]+)/ do |username, ip|
     puts "SSH authentication failure for #{username} from #{ip}
   end
 

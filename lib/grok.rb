@@ -2,14 +2,14 @@ require 'grok/watcher'
 
 $watcher = Grok::Watcher.new
 
-%w(configure on).each do |method|
-  eval(<<-EOF)
-    def #{method}(*args, &block)
-      $watcher.#{method}(*args, &block)
-    end
-  EOF
+def configure(*args, &block)
+  $watcher.configure(*args, &block)
 end
 
+def on(match, opts={}, &block)
+  $watcher.on(match, opts, &block)
+end
+  
 at_exit do
   unless defined?(Test::Unit)
     raise $! if $!

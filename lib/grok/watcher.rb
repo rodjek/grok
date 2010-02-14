@@ -18,7 +18,8 @@ module Grok
       b.call(@config)
     end
 
-    def on(event, match=//, &block)
+    def on(match, opts={}, &block)
+      event = :log
       match = match.to_s if match.is_a? Integer
       (@events[event] ||= []) << [Regexp.new(match), block]
     end

@@ -6,6 +6,6 @@ configure do |c|
   c.replay = 0
 end
 
-on :log, /Failed password for root from ([\d\.]+)/ do |ip|
+on /Failed password for root from ([\d\.]+)/ do |ip|
   ret = `/sbin/iptables -I INPUT --source #{ip} -j REJECT`
 end
