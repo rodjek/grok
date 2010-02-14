@@ -24,14 +24,6 @@ module Grok
       (@events[event] ||= []) << [Regexp.new(match), block]
     end
 
-    def dispatch(event, log)
-      if handler = find(event, log)
-        regexp, block = *handler
-        self.match = log.match(regexp).captures
-        invoke block
-      end
-    end
-
     def start
       File.open(@config.file) do |log|
         log.extend(File::Tail)
@@ -65,6 +57,14 @@ module Grok
       catch(:halt) {
         __grok_event_handler(*bargs)
       }
+    end
+
+    def dispatch(event, log)
+      if handler = find(event, log)
+        regexp, block = *handler
+        self.match = log.match(regexp).captures
+        invoke block
+      end
     end
   end
 end
