@@ -1,6 +1,44 @@
-= grok
+= Grok
 
-Description goes here.
+Grok aims to be a replacement for the now antiquated SEC (Simple Event 
+Correlator).
+
+== Usage
+A simple Grok watcher needs very little in the way of configuration
+  require 'grok'
+  
+  configure do |c|
+    c.file = "/var/log/auth.log"
+    c.interval = 2
+    c.replay = 0
+  end
+
+The above script won't do very much, though.
+
+=== Configuration
+There's only a few configuration parameters for Grok at this stage
+
+* file: The log file to watch
+* interval: How often to check the log file for changes (in seconds)
+* replay: The number of lines to read from the bottom of the file on startup
+
+=== Responding to log events
+At it's most basic, you can simply get Grok to print a message as it
+receives them (pretty pointless)
+  on :log do
+    puts "I just got a log message"
+  end
+
+Lets try something a bit more useful though.  Lets say I want to know every
+time there's an SSH authenitcation failure.  For that, we can make use of the
+RegExp functionality in the event handlers
+
+  on :log, /sshd\[\d+\]: Failed password for ([\d\w]+) from ([\d\.]+)/ do |username, ip|
+    puts "SSH authentication failure for #{username} from #{ip}
+  end
+
+This is a bit better.  You could go further to have it automatically block the 
+IP with iptables if you wanted (see examples/ssh_sentry.rb).
 
 == Note on Patches/Pull Requests
  
