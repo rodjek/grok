@@ -48,7 +48,7 @@ Getting there.  What if our user failed a couple of times over the past month?
 We don't really want to him out for that, so we'll put a time limit on the rule
 so only 3 incorrect login attempts within the past 2 minutes will trigger it.
 
-  on /sshd\[\d+\]: Failed password for ([\d\w]+) from ([\d\.]+)/, :times => 3, :withn => '2m' do |username, ip|
+  on /sshd\[\d+\]: Failed password for ([\d\w]+) from ([\d\.]+)/, :times => 3, :within => '2m' do |username, ip|
     puts "SSH authentication failure for #{username} from #{ip}"
   end
 
