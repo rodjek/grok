@@ -34,7 +34,7 @@ time there's an SSH authenitcation failure.  For that, we can make use of the
 RegExp functionality in the event handlers
 
   on /sshd\[\d+\]: Failed password for ([\d\w]+) from ([\d\.]+)/ do |username, ip|
-    puts "SSH authentication failure for #{username} from #{ip}
+    puts "SSH authentication failure for #{username} from #{ip}"
   end
 
 This is a bit better.  You could go further to have it automatically block the 
