@@ -22,7 +22,8 @@ module Grok
     def on(match, opts={}, &block)
       event = :log
       match = match.to_s if match.is_a? Integer
-      (@events[event] ||= []) << [Regexp.new(match), block, opts[:times]]
+      within = opts[:within] ? Grok.parse_time_string(opts[:within]) : nil
+      (@events[event] ||= []) << [Regexp.new(match), block, opts[:times], within]
     end
 
     def start
@@ -62,12 +63,22 @@ module Grok
 
     def dispatch(event, log)
       if handler = find(event, log)
-        regexp, block, times = *handler
+        regexp, block, times, within = *handler
         self.match = log.match(regexp).captures
-        (@event_log[match] ||= []) << [Time.now]
+        (@event_log[match] ||= []) << Time.now.to_i
         if @event_log[match].length >= times.to_i
-          invoke block
-          @event_log[match].clear
+          if within:
+            times_within_range = @event_log[match].reject { |event_time|
+              event_time < (Time.now.to_i - within)
+            }
+            if times_within_range.length >= times.to_i
+              invoke block
+              @event_log[match].clear
+            end
+          else
+            invoke block
+            @event_log[match].clear
+          end
         end
       end
     end

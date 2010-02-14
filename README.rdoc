@@ -3,7 +3,7 @@
 Grok aims to be a replacement for the now antiquated SEC (Simple Event 
 Correlator).
 
-== Usage
+== Getting started
 A simple Grok watcher needs very little in the way of configuration
   require 'grok'
   
@@ -43,6 +43,20 @@ though, so why don't we give them three tries before blocking them?
   on /sshd\[\d+\]: Failed password for ([\d\w]+) from ([\d\.]+)/, :times => 3 do |username, ip|
     puts "SSH authentication failure for #{username} from #{ip}"
   end
+
+Getting there.  What if our user failed a couple of times over the past month?
+We don't really want to him out for that, so we'll put a time limit on the rule
+so only 3 incorrect login attempts within the past 2 minutes will trigger it.
+
+  on /sshd\[\d+\]: Failed password for ([\d\w]+) from ([\d\.]+)/, :times => 3, :withn => '2m' do |username, ip|
+    puts "SSH authentication failure for #{username} from #{ip}"
+  end
+
+Your time string can be made of any combination of years (y), months (M), 
+weeks (w), days (d), hours (h), minutes (m) and seconds (s).  For example
+
+  '1d2h3s' => 1 day, 2 hours and 3 seconds
+  '2y3m' => 2 years and 3 minutes
 
 == Note on Patches/Pull Requests
  

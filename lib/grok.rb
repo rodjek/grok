@@ -1,4 +1,5 @@
 require 'grok/watcher'
+require 'grok/time'
 
 $watcher = Grok::Watcher.new
 
