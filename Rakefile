@@ -6,7 +6,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "grok"
     gem.summary = %Q{A ruby log event correlator}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.description = %Q{A more featureful replacement for SEC (Simple Event Correlator) in Ruby.}
     gem.email = "tim@sharpe.id.au"
     gem.homepage = "http://github.com/rodjek/grok"
     gem.authors = ["Tim Sharpe"]
