@@ -58,8 +58,8 @@ weeks (w), days (d), hours (h), minutes (m) and seconds (s).  For example
   '1d2h3s' => 1 day, 2 hours and 3 seconds
   '2y3m' => 2 years and 3 minutes
 
-=== Other events ===
-==== Exit ====
+=== Other events
+==== Exit
 You can also define event handlers to run when your script exits (for the
 purposes of printing a summary, or whatever you want).
 
