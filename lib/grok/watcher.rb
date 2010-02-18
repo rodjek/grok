@@ -10,7 +10,7 @@ module Grok
     def initialize(&b)
       @events = {}
       @event_log = {}
-      @config = Config.new("/var/log/messages", 10)
+      @config = Config.new("/var/log/messages", 10, 0)
 
       #instance_eval(&b) if block_given?
     end
@@ -20,10 +20,13 @@ module Grok
     end
 
     def on(match, opts={}, &block)
-      event = :log
       match = match.to_s if match.is_a? Integer
       within = opts[:within] ? Grok.parse_time_string(opts[:within]) : nil
-      (@events[event] ||= []) << [Regexp.new(match), block, opts[:times], within]
+      (@events[:log] ||= []) << [Regexp.new(match), block, opts[:times], within]
+    end
+
+    def exit(&block)
+      (@events[:exit] ||= []) << block
     end
 
     def start
@@ -35,6 +38,10 @@ module Grok
           dispatch(:log, line)
         }
       end
+    end
+
+    def stop
+      dispatch(:exit)
     end
 
   private
@@ -61,7 +68,12 @@ module Grok
       }
     end
 
-    def dispatch(event, log)
+    def dispatch(event, log=nil)
+      if event == :exit
+        @events[:exit].each { |block| invoke block }
+        Process.exit
+      end
+
       if handler = find(event, log)
         regexp, block, times, within = *handler
         self.match = log.match(regexp).captures
