@@ -71,6 +71,16 @@ purposes of printing a summary, or whatever you want).
 You can define as many of these handlers as you'd like and they'll be run
 when the Ruby process has been sent a SIGINT.
 
+==== Start
+You can also define event handlers to run before Grok starts reading it's
+input.
+
+  start do
+    puts "Starting"
+  end
+
+You can define as many of these event handlers as you'd like
+
 == Note on Patches/Pull Requests
  
 * Fork the project.

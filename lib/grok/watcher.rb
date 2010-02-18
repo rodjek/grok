@@ -25,11 +25,17 @@ module Grok
       (@events[:log] ||= []) << [Regexp.new(match), block, opts[:times], within]
     end
 
-    def exit(&block)
+    def on_exit(&block)
       (@events[:exit] ||= []) << block
     end
 
+    def on_start(&block)
+      (@events[:start] ||= []) << block
+    end
+
     def start
+      dispatch(:start)
+
       if !@config.file.nil?
         File.open(@config.file) do |log|
           log.extend(File::Tail)
@@ -82,7 +88,9 @@ module Grok
         Process.exit
       end
 
-      if handler = find(event, log)
+      if event == :start
+        @events[:start].each { |block| invoke block }
+      elsif handler = find(event, log)
         regexp, block, times, within = *handler
         self.match = log.match(regexp).captures
         (@event_log[match] ||= []) << Time.now.to_i

@@ -12,7 +12,11 @@ def on(match, opts={}, &block)
 end
 
 def exit(&block)
-  $watcher.exit(&block)
+  $watcher.on_exit(&block)
+end
+
+def start(&block)
+  $watcher.on_start(&block)
 end
 
 trap "SIGINT", proc { $watcher.stop }
