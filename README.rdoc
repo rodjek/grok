@@ -21,6 +21,7 @@ There's only a few configuration parameters for Grok at this stage
 * file: The log file to watch
 * interval: How often to check the log file for changes (in seconds)
 * replay: The number of lines to read from the bottom of the file on startup
+* process: Spawn this process and feed the output into grok
 
 === Responding to log events
 At it's most basic, you can simply get Grok to print out each message as it

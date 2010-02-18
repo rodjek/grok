@@ -2,7 +2,7 @@ require 'rubygems'
 require 'file/tail'
 
 module Grok
-  Config = Struct.new(:file, :interval, :replay)
+  Config = Struct.new(:file, :interval, :replay, :process)
   
   class Watcher
     attr_accessor :config, :file, :interval, :match, :replay
@@ -10,7 +10,7 @@ module Grok
     def initialize(&b)
       @events = {}
       @event_log = {}
-      @config = Config.new("/var/log/messages", 10, 0)
+      @config = Config.new(nil, 10, 0, nil)
 
       #instance_eval(&b) if block_given?
     end
@@ -30,12 +30,20 @@ module Grok
     end
 
     def start
-      File.open(@config.file) do |log|
-        log.extend(File::Tail)
-        log.interval = @config.interval
-        log.backward(@config.replay)
-        log.tail { |line|
-          dispatch(:log, line)
+      if !@config.file.nil?
+        File.open(@config.file) do |log|
+          log.extend(File::Tail)
+          log.interval = @config.interval
+          log.backward(@config.replay)
+          log.tail { |line|
+            dispatch(:log, line)
+          }
+        end
+      elsif !@config.process.nil?
+        IO.popen(@config.process) { |fd|
+          while line = fd.gets
+            dispatch(:log, line)
+          end
         }
       end
     end
