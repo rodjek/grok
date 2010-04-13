@@ -19,6 +19,10 @@ def start(&block)
   $watcher.on_start(&block)
 end
 
+def ignore(match)
+  $watcher.ignore(match)
+end
+
 trap "SIGINT", proc { $watcher.stop }
 
 at_exit do

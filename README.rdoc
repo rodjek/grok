@@ -59,6 +59,19 @@ weeks (w), days (d), hours (h), minutes (m) and seconds (s).  For example
   '1d2h3s' => 1 day, 2 hours and 3 seconds
   '2y3m' => 2 years and 3 minutes
 
+=== Ignoring log events ===
+If you want grok to ignore certain log events, you can simply pass a regexp to the ignore function.
+
+  ignore /regexp/
+
+This is particularly useful if you have a catch-all event in your script somewhere
+
+  ignore /kernel: imklog [\d\.]+, log source = /proc/kmsg started/
+
+  on /(.*) do |line|
+    #foo
+  end
+
 === Other events
 ==== Exit
 You can also define event handlers to run when your script exits (for the

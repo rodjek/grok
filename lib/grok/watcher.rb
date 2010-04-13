@@ -19,6 +19,11 @@ module Grok
       b.call(@config)
     end
 
+    def ignore(match)
+      match = match.to_s if match.is_a? Integer
+      (@events[:ignore] ||= []) << [Regexp.new(match)]
+    end
+
     def on(match, opts={}, &block)
       match = match.to_s if match.is_a? Integer
       within = opts[:within] ? Grok.parse_time_string(opts[:within]) : nil
@@ -90,6 +95,8 @@ module Grok
 
       if event == :start
         @events[:start].each { |block| invoke block }
+      elsif handler = find(:ignore, log)
+        # do nothing!
       elsif handler = find(event, log)
         regexp, block, times, within = *handler
         self.match = log.match(regexp).captures
