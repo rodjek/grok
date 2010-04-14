@@ -11,8 +11,7 @@ module Grok
       @events = {}
       @event_log = {}
       @config = Config.new(nil, 10, 0, nil)
-
-      #instance_eval(&b) if block_given?
+      @catchable_signals = [:usr1, :usr2]
     end
 
     def configure(&b)
@@ -25,9 +24,16 @@ module Grok
     end
 
     def on(match, opts={}, &block)
-      match = match.to_s if match.is_a? Integer
-      within = opts[:within] ? Grok.parse_time_string(opts[:within]) : nil
-      (@events[:log] ||= []) << [Regexp.new(match), block, opts[:times], within]
+      if match.is_a? Symbol
+        if @catchable_signals.include? match
+          (@events[match] ||= []) << block
+          puts @events
+        end
+      else 
+        match = match.to_s if match.is_a? Integer
+        within = opts[:within] ? Grok.parse_time_string(opts[:within]) : nil
+        (@events[:log] ||= []) << [Regexp.new(match), block, opts[:times], within]
+      end
     end
 
     def on_exit(&block)
@@ -63,6 +69,14 @@ module Grok
       dispatch(:exit)
     end
 
+    def usr1
+      dispatch(:usr1)
+    end
+
+    def usr2
+      dispatch(:usr2)
+    end
+
   private
     def find(type, log)
       if events = @events[type]
@@ -95,6 +109,8 @@ module Grok
 
       if event == :start
         @events[:start].each { |block| invoke block }
+      elsif @catchable_signals.include? event
+        @events[event].each { |block| invoke block }
       elsif handler = find(:ignore, log)
         # do nothing!
       elsif handler = find(event, log)

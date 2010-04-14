@@ -94,6 +94,20 @@ input.
 
 You can define as many of these event handlers as you'd like
 
+==== SIGUSR1 and SIGUSR2
+You can define event handlers to run whenever your grok process receives 
+SIGUSR1 or SIGUSR2 as well.
+
+  on :usr1 do
+    puts "SIGUSR1 received"
+  end
+
+  on :usr2 do
+    puts "SIGUSR2 received"
+  end
+
+You can define as many of these event handlers as you'd like.
+
 == Note on Patches/Pull Requests
  
 * Fork the project.

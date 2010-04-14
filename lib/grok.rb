@@ -24,6 +24,8 @@ def ignore(match)
 end
 
 trap "SIGINT", proc { $watcher.stop }
+trap "SIGUSR1", proc { $watcher.usr1 }
+trap "SIGUSR2", proc { $watcher.usr2 }
 
 at_exit do
   unless defined?(Test::Unit)
