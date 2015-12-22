@@ -118,7 +118,7 @@ module Grok
         self.match = log.match(regexp).captures
         (@event_log[match] ||= []) << Time.now.to_i
         if @event_log[match].length >= times.to_i
-          if within:
+          if within
             times_within_range = @event_log[match].reject { |event_time|
               event_time < (Time.now.to_i - within)
             }
